@@ -60,7 +60,7 @@ Functions decorated with `@step()` perform specific operations within a process:
 def load_data():
     # Data loading logic
     df = pd.read_csv("data.csv")
-    return {'df': df.to_dict(orient='list')}
+    return {'df': df.to_dict(orient='list')} 
 
 @step()
 def preprocess(raw: SerializableData):
