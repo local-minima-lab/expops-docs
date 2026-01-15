@@ -1,0 +1,76 @@
+site_name: ExpOps Docs
+site_description: Documentation for the ExpOps MLOps platform
+site_author: ExpOps Team
+site_url: https://local-minima-lab.github.io/expops-docs/
+repo_url: https://github.com/local-minima-lab/expops-docs
+repo_name: expops-docs
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.annotate
+    - content.code.copy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: getting-started/quick-start.md
+    - Creating a Project: getting-started/creating-a-project.md
+  - Project Structure:
+    - Overview: project-structure/overview.md
+    - Configuration Files: project-structure/configuration.md
+    - Model Code: project-structure/model-code.md
+  - Features:
+    - DAG Pipeline Execution: features/pipelines.md
+    - Distributed Computing: features/distributed.md
+    - Environment Isolation: features/environments.md
+    - Caching & Reproducibility: features/caching.md
+    - Reporting: features/reporting.md
+
+  - Web UI:
+    - Local Web UI: web-ui/local-ui.md
+  - Advanced Topics:
+    - Backends: advanced/backends.md
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+
