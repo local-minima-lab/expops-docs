@@ -63,7 +63,7 @@ nav:
     - Environment Isolation: features/environments.md
     - Caching & Reproducibility: features/caching.md
     - Reporting: features/reporting.md
-
+    - Parallelism: features/parallelism.md
   - Web UI:
     - Local Web UI: web-ui/local-ui.md
   - Advanced Topics:
