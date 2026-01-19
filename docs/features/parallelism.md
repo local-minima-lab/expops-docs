@@ -7,10 +7,12 @@ ExpOps can parallelize pipeline execution by duplicating parts of the process gr
 Use data parallelism when a process returns a dataframe that should be split and processed in parallel by downstream processes.
 
 **Configuration keys**:
+
 - `data_parallelism.size`: Number of partitions (int) or explicit row counts (list of ints).
 - `data_parallelism.data_name`: Key in the process return dict that contains the dataframe.
 
 **Behavior**:
+
 - The dataframe is split into partitions.
 - Downstream processes are duplicated per partition until a data aggregation boundary.
 - Partitioned processes are suffixed with `_1`, `_2`, ... in the expanded graph.
@@ -26,6 +28,7 @@ processes:
 ```
 
 **Process return requirements**:
+
 - The process must return a dict containing `data_name`.
 - The value can be a pandas DataFrame, a list of records, or a dict (it will be converted).
 
@@ -34,9 +37,11 @@ processes:
 Use seed parallelism to run downstream branches multiple times with deterministic seeds.
 
 **Configuration keys**:
+
 - `seed_parallelism.seeds`: List of integer seeds (can also be a single int or list in YAML).
 
 **Behavior**:
+
 - Downstream processes are duplicated once per seed until a seed aggregation boundary.
 - Seeded processes are suffixed with `_seed{value}` in the expanded graph.
 - The seed value is injected into the process hyperparameters as `random_seed`.
