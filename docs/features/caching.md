@@ -7,16 +7,14 @@ ExpOps provides intelligent multi-level caching and reproducibility guarantees. 
 When caching is enabled, the platform separates **lightweight manifests** from **heavy artifacts**:
 
 - **Step/process manifests (`.pkl` files)**:
-  - Stored under a cache prefix (for example `cache/steps/` in GCS).
-  - Contain small Python dictionaries describing the result of a step or process.
-  - Heavy artifacts (models, large arrays) are represented as *references* rather than inlined objects.
+    - Stored under a cache prefix (for example `cache/steps/steps/` in GCS).
+    - Contain small Python dictionaries describing the result of a step or process.
+    - Heavy artifacts (models, large arrays) are represented as *references* rather than inlined objects.
 - **Models (`models/` prefix)**:
-  - Any recognized model object (for example, most `sklearn` and `xgboost` estimators) is always serialized separately.
-  - Stored as `.joblib` blobs under a `models/<run_id>/<process_name>/...` path.
-  - Manifests contain small dictionaries with a `__mlops_model_ref__` flag and the object URI.
+    - Any recognized model object (for example, most `sklearn` and `xgboost` estimators) is always serialized separately.
+    - Stored as `.joblib` blobs under a `models/<run_id>/<process_name>/...` path.
 - **Payloads (`payloads/` prefix)**:
-  - Large array-like payloads (NumPy arrays, lists/tuples coercible to arrays) above a small size threshold are stored as compressed `.npz` blobs.
-  - Manifests contain small dictionaries with a `__mlops_payload_ref__` flag and the object URI.
+    - Large array-like payloads (NumPy arrays, lists/tuples coercible to arrays) above a small size threshold are stored as compressed `.npz` blobs.
 
 ## Caching levels
 
