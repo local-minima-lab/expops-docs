@@ -8,7 +8,7 @@ Each ExpOps project follows a standardized directory structure that organizes co
 my-project/
 ├── configs/
 │   ├── project_config.yaml      # Main project configuration
-│   └── cluster_config.yaml      # Optional cluster configuration
+│   └── compute_config.yaml      # Optional cluster configuration
 ├── models/
 │   └── <model_name>.py          # Model implementation
 ├── charts/
@@ -18,10 +18,11 @@ my-project/
 ├── data/                         # Input datasets
 ├── requirements.txt              # Main project dependencies
 ├── logs/                         # Execution logs
-├── keys/                         # Credentials (e.g., firestore.json)
 └── artifacts/                    # Generated artifacts
     ├── charts/
 ```
+
+For GCP-backed backends (e.g. Firestore), place credentials in the project root (e.g. `firestore.json`) and set `credentials_json: firestore.json` in your config.
 
 ## Key Components
 
@@ -29,7 +30,7 @@ my-project/
 
 The `configs/` directory contains all project configuration:
 - **project_config.yaml**: Main configuration (required)
-- **cluster_config.yaml**: Cluster execution settings (optional)
+- **compute_config.yaml**: Cluster execution settings (optional)
 
 See [Configuration Files](configuration.md) for details.
 
@@ -48,7 +49,7 @@ The `charts/` directory contains visualization code:
 - **plot_metrics.py**: Static PNG chart generation
 - **plot_metrics.js**: Dynamic interactive charts
 
-See [Reporting](reporting.md) for details.
+See [Chart Generation](charts.md) for details.
 
 ### Dependencies
 

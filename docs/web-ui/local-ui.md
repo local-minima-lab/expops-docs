@@ -53,7 +53,7 @@ The web UI requires:
 Ensure your `project_config.yaml` has:
 
 ```yaml
-model:
+experiment:
   parameters:
     cache:
       backend: gcs
@@ -66,8 +66,8 @@ Local cache backends work for execution but metrics/charts require remote backen
 ### No Projects/Runs Visible
 
 - Ensure you've run pipelines with a remote KV backend
-- Check that `model.parameters.cache.backend` is configured
-- Verify credentials are set up (e.g., `keys/firestore.json`)
+- Check that `experiment.parameters.cache.backend` is configured
+- Verify credentials are set up (e.g., `firestore.json` in project root)
 
 ### Charts Not Displaying
 

@@ -4,14 +4,14 @@ ExpOps uses NetworkX to represent and execute ML pipelines as directed acyclic g
 
 ## Pipeline Definition
 
-Pipelines are defined in `configs/project_config.yaml` under `model.parameters.pipeline` using two main components:
+Pipelines are defined in `configs/project_config.yaml` under `experiment.parameters.pipeline` using two main components:
 
 ### 1. Process Adjacency List (`process_adjlist`)
 
 Defines the DAG structure as a multi-line string (NetworkX adjacency list format):
 
 ```yaml
-model:
+experiment:
   parameters:
     pipeline:
       process_adjlist: |
@@ -24,7 +24,6 @@ model:
 Each line defines edges: the first token is the source process, the second token is the target process that depends on it.
 
 **Example**: The above creates a DAG where:
-
 - `feature_engineering` runs first
 - `preprocess` depends on `feature_engineering`
 - `train_model` depends on `preprocess`
@@ -47,36 +46,42 @@ processes:
   - name: "feature_engineering"
     description: "Load and prepare data"
     code_function: "define_feature_engineering_process"
+    environment: "my-project-env"
   
   - name: "train_model"
     description: "Train the model"
     code_function: "define_training_process"
-    hyperparameters:
+    environment: "my-project-env"
+    parameters:
       learning_rate: 0.001
       epochs: 50
   
   - name: "plot_metrics"
     type: chart
     description: "Generate visualization"
+    environment: "my-project-env-reporting"
 ```
 
 **Process attributes**:
-
 - `name`: Unique process identifier (must match names in `process_adjlist`)
 - `description`: Human-readable description
-- `code_function`: Name of the Python function that defines the process (see below)
-- `hyperparameters`: Optional hyperparameters passed to the process
+- `script` (optional): Key from the top-level `scripts` section to use for this process. Defaults to the first key in `scripts` if omitted. See [Configuration](../project-structure/configuration.md) for the `scripts` section and defaults.
+- `code_function`: Name of the Python function that defines the process (see below). Defaults to the process name if omitted, so you can omit it when the function name matches the process name.
+- `environment`: Environment name to use (defaults to the first environment if omitted)
+- `parameters`: Optional parameters injected by name into the process function
 - `type`: Optional type (e.g., `"chart"` for chart generation processes)
+- `data_parallelism`: Optional split configuration (see [data-parallelism](../features/data-parallelism.md))
+- `data_aggregation`: Optional flag to merge the latest data-parallel layer (see [data-parallelism](../features/data-parallelism.md))
 
 ## Process Functions
 
 Processes are implemented in Python using the `@process()` decorator. The function name must match the `code_function` in the config:
 
 ```python
-from mlops.core import process, step, 
+from expops.core import process, step, 
 
 @process()
-def define_feature_engineering_process(data, hyperparameters):
+def define_feature_engineering_process(test_size: float = 0.2):
     """Process that loads and prepares data."""
     
     @step()
@@ -99,34 +104,30 @@ def define_feature_engineering_process(data, hyperparameters):
 ```
 
 **Key points**:
-
-- Process functions receive `data` (results from upstream processes) and `hyperparameters`
+- Process functions declare explicit parameters for upstream output keys and process parameter keys
 - Steps are defined inside the process function using `@step()` decorator
 - Steps execute sequentially within a process
 - Process returns a dictionary that becomes available to downstream processes
 
 ## Data Flow Between Processes
 
-Processes access data from upstream processes via the `data` parameter:
+Processes access data from upstream processes via matching parameter names:
 
 ```python
 @process()
-def define_training_process(data, hyperparameters):
-    # Access data from upstream process
-    fe_data = data.get('feature_engineering', {})
-    df = pd.DataFrame(fe_data.get('cleaned_df', {}))
-    
-    # Use the data for training
+def define_training_process(cleaned_df):
+    df = pd.DataFrame(cleaned_df)
     model = train_model(df)
     return {'model': model}
 ```
 
-The `data` dictionary contains results from all upstream processes, keyed by process name.
+Inputs are injected by name. If multiple upstream processes return the same key (or a key collides with a parameter), the runtime raises an error.
+
+For `data_aggregation` processes, duplicate upstream keys are provided as a dictionary keyed by partition (`data1`, `data2`, ...).
 
 ## Execution Order
 
 ExpOps automatically determines execution order based on:
-
 - **DAG structure**: Defined by `process_adjlist`
 - **Process dependencies**: Inferred from the adjacency list
 - **Available resources**: Distributed across workers when using cluster execution

@@ -2,22 +2,6 @@
 
 ExpOps automatically manages virtual environments for each project.
 
-## Environment Types
-
-### Training Environment
-
-Used for model training and inference:
-- Dependencies from `requirements.txt`
-- ML frameworks and data processing libraries
-- Model-specific dependencies
-
-### Reporting Environment
-
-Used for chart generation:
-- Dependencies from `charts/requirements.txt`
-- Visualization libraries (matplotlib, seaborn)
-- Minimal dependencies to reduce overhead
-
 ## Environment Managers
 
 ExpOps supports multiple environment managers:
@@ -45,17 +29,23 @@ Environments are automatically:
 
 ## Configuration
 
-Environment settings are configured in `configs/project_config.yaml`:
+Environment settings are configured in `configs/project_config.yaml`. Each environment has a name and one or more manager entries (`venv` or `conda`) whose value is a list of requirement files:
 
 ```yaml
 environment:
-  type: venv  # or conda
+  my-project-env:
+    venv: ["my-project/requirements.txt"]
+  my-project-env-reporting:
+    venv: ["my-project/charts/requirements.txt"]
+  my-project-conda:
+    conda: ["my-project/environment.yml"]
 ```
+
+Inline requirements or conda dependencies in the config are not supported; use files.
 
 ## Benefits
 
 Environment isolation provides:
-
 - **Dependency isolation**: No conflicts between projects
 - **Reproducibility**: Consistent environments
 - **Clean separation**: Training vs. reporting dependencies

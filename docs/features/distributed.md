@@ -22,20 +22,16 @@ Execute pipelines on distributed clusters using Dask as the underlying distribut
 
 Run on SLURM clusters by creating a Dask cluster via SLURM job submission:
 
-1. Install SLURM dependencies:
-```bash
-pip install expops[slurm]
-```
-
-2. Configure cluster in `configs/cluster_config.yaml`:
+1. Configure cluster in `configs/compute_config.yaml`:
 ```yaml
 provider: slurm
-workers: 4
-cores_per_worker: 2
-memory_per_worker: 4GB
+num_workers: 4
+options:
+  worker_cores: 2
+  worker_memory: 4GB
 ```
 
-3. Run without `--local` flag:
+2. Run without `--local` flag:
 ```bash
 expops run my-project
 ```
@@ -44,7 +40,7 @@ The SLURM provider uses `dask-jobqueue` to automatically submit Dask scheduler a
 
 ## Configuration
 
-Cluster settings are defined in `configs/cluster_config.yaml`:
+Cluster settings are defined in `configs/compute_config.yaml`:
 
 - **Provider**: `slurm`
 - **Workers**: Number of worker nodes

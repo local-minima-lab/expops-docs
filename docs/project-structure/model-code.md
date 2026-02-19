@@ -8,10 +8,10 @@ Model code in ExpOps projects defines the ML pipeline using decorators and funct
 
 ## Required Imports
 
-**Always import from `mlops.core`**:
+**Always import from `expops.core`**:
 
 ```python
-from mlops.core import (
+from expops.core import (
     step, 
     process, 
     log_metric
@@ -27,27 +27,20 @@ Functions decorated with `@process()` define pipeline processes. **Process funct
 #### Required Function Signature
 
 **Every process function MUST:**
-
-1. Accept `data` as the first parameter (required)
-2. Accept `hyperparameters` as the second parameter (optional)
-3. Return a dictionary (required - non-dict returns will raise an error)
-4. Return only serializable data (dictionaries, lists, primitives - not complex objects)
+1. Declare explicit parameters for the upstream output keys and hyperparameter keys it needs
+2. Return a dictionary (required - non-dict returns will raise an error)
+3. Return only serializable data (dictionaries, lists, primitives - not complex objects)
+4. Ensure output keys are unique across upstream dependencies (collisions raise errors)
 
 ```python
 @process()
-def define_my_process(data, hyperparameters):
-    # Access upstream process data
-    upstream_data = data.get('upstream_process_name', {})
-    
-    # Use hyperparameters if needed
-    learning_rate = (hyperparameters or {}).get('learning_rate', 0.001)
-    
-    # Process logic here
-    result = perform_work(upstream_data, learning_rate)
+def define_my_process(cleaned_df, learning_rate: float = 0.001):
+    # cleaned_df is injected from an upstream process return key
+    result = perform_work(cleaned_df, learning_rate)
     
     # MUST return a dictionary with serializable values
     return {
-        'result': result  # Must be serializable (dict, list, primitive types)
+        'scores': result  # Must be serializable (dict, list, primitive types)
     }
 ```
 
@@ -60,7 +53,7 @@ Functions decorated with `@step()` perform specific operations within a process:
 def load_data():
     # Data loading logic
     df = pd.read_csv("data.csv")
-    return {'df': df.to_dict(orient='list')} 
+    return {'df': df.to_dict(orient='list')}
 
 @step()
 def preprocess(raw: SerializableData):
@@ -74,7 +67,7 @@ def preprocess(raw: SerializableData):
     return {'processed_df': processed.to_dict(orient='list')}
 
 @step()
-def train(prep_data: SerializableData, hyperparameters: Dict[str, Any] | None = None):
+def train(prep_data: SerializableData):
     # Training logic
     X = np.array(prep_data['processed_df'])
     model = train_model(X)
@@ -83,7 +76,7 @@ def train(prep_data: SerializableData, hyperparameters: Dict[str, Any] | None = 
 
 **Step Notes**:
 - Steps are defined **inside** process functions
-- Steps can access `hyperparameters` if passed from the process
+- Steps can accept explicit parameters passed from the process
 - Steps execute sequentially within their parent process
 
 
@@ -92,7 +85,7 @@ def train(prep_data: SerializableData, hyperparameters: Dict[str, Any] | None = 
 Use `log_metric()` for experiment tracking:
 
 ```python
-from mlops.core import log_metric
+from expops.core import log_metric
 
 # Log scalar metrics (step omitted - auto-increments)
 log_metric("accuracy", 0.95)
@@ -123,28 +116,17 @@ for epoch in range(100):
 
 ### Data Flow Between Processes
 
-Processes receive data from all upstream processes via the `data` dictionary:
+Processes receive data from all upstream processes by **matching parameter names** to upstream return keys and hyperparameter keys:
 
 ```python
 @process()
-def define_downstream_process(data, hyperparameters):
-    """
-    'data' contains results from ALL upstream processes, keyed by process name.
-    """
-    # Access specific upstream process
-    training_result = data.get('training_process', {})
-    fe_result = data.get('feature_engineering_process', {})
-    
-    # Use the data
-    model = training_result.get('model')
-    X_test = fe_result.get('X_test', [])
-    
-    # Process and return
+def define_downstream_process(model, X_test):
+    # model and X_test are injected from upstream outputs
     predictions = model.predict(X_test)
     return {'predictions': predictions.tolist()}
 ```
 
-**Important**: The `data` parameter is automatically populated by the framework with results from upstream processes based on the pipeline DAG defined in `project_config.yaml`.
+**Important**: Inputs are injected by name. If two upstream processes return the same key (or a key collides with a hyperparameter), the runtime raises an error.
 
 ## Example
 

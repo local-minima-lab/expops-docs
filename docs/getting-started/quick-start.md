@@ -18,8 +18,7 @@ Use the `sklearn-basic` template to create your first project:
 expops create sklearn-basic --template sklearn-basic
 ```
 
-This creates a new project at `projects/sklearn-basic/` with:
-
+This creates a new project at `sklearn-basic/` with:
 - Configuration files
 - Model code
 - Chart generation scripts
@@ -35,7 +34,6 @@ expops run sklearn-basic --local
 ```
 
 This will:
-
 1. Set up the virtual environment
 2. Install dependencies
 3. Execute the pipeline
@@ -45,22 +43,17 @@ This will:
 
 The project configuration is located at:
 ```
-projects/sklearn-basic/configs/project_config.yaml
+sklearn-basic/configs/project_config.yaml
 ```
 
-By default, the template uses a **local-first cache backend**. To enable cross-process live metrics (web UI) or remote backends, update `model.parameters.cache.backend` in the project config.
+By default, the template uses a **local (SQLite) cache backend**, which is persistent. To enable cross-process live metrics (web UI) or remote backends, update `experiment.parameters.cache.backend` in the project config.
 
 ### Important: Caching and Web UI Requirements
 
-**For local development with persistent caching and web UI support**, you need to configure a persistent KV backend. The default in-memory KV backend does not support:
-
-- Persistent caching across runs (cache metadata is lost when the process restarts)
-- Web UI metrics and charts
-
-To enable both features, configure a GCP KV backend (Firestore) in your `project_config.yaml`:
+The default local (SQLite) KV backend supports persistent caching. For web UI metrics and charts across runs, or for remote/shared setups, configure a KV backend such as Firestore in your `project_config.yaml`:
 
 ```yaml
-model:
+experiment:
   parameters:
     cache:
       backend: local  # or gcs
@@ -68,9 +61,8 @@ model:
 ```
 
 **Setup steps**:
-
 1. Create a Firestore database in Google Cloud
-2. Add credentials to `projects/sklearn-basic/keys/firestore.json`
+2. Add credentials to `sklearn-basic/firestore.json`
 3. Configure the KV backend in your project config
 
 See the [Backends](../advanced/backends.md) documentation for more details on KV backends and setup instructions.
@@ -79,7 +71,7 @@ See the [Backends](../advanced/backends.md) documentation for more details on KV
 
 To run on a distributed cluster (e.g., SLURM):
 
-1. Add a `cluster_config.yaml` under `configs/`
+1. Add a `compute_config.yaml` under `configs/`
 2. Remove the `--local` flag when running:
 
 ```bash
