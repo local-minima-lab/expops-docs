@@ -34,6 +34,7 @@ expops run sklearn-basic --local
 ```
 
 This will:
+
 1. Set up the virtual environment
 2. Install dependencies
 3. Execute the pipeline
@@ -46,26 +47,35 @@ The project configuration is located at:
 sklearn-basic/configs/project_config.yaml
 ```
 
-By default, the template uses a **local (SQLite) cache backend**, which is persistent. To enable cross-process live metrics (web UI) or remote backends, update `experiment.parameters.cache.backend` in the project config.
+By default, the template uses a **local (SQLite) cache backend**, which is persistent. To enable cross-process live metrics (web UI) or remote backends, update `experiment.parameters.cache` in the project config.
 
 ### Important: Caching and Web UI Requirements
 
-The default local (SQLite) KV backend supports persistent caching. For web UI metrics and charts across runs, or for remote/shared setups, configure a KV backend such as Firestore in your `project_config.yaml`:
+The default `cache.backend.type: local` supports persistent caching. For web UI metrics and charts across runs, or for remote/shared setups, set `cache.backend.type` to `gcp` (Firestore) and optionally configure `cache.object_store` for GCS. Example in `project_config.yaml`:
 
 ```yaml
 experiment:
   parameters:
     cache:
-      backend: local  # or gcs
-      kv_backend: firestore  # Required for persistent caching and web UI
+      backend:
+        type: local   # default; use gcp for Firestore (web UI / shared runs)
+        # For GCP (Firestore):
+        # type: gcp
+        # gcp_project: <your-gcp-project-id>
+        # credentials_json: firestore.json
+      # Optional object store for cache artifacts (e.g. GCS):
+      # object_store:
+      #   type: gcs
+      #   bucket: <your-gcs-bucket-name>
+      #   prefix: sklearn-basic/cache/steps
 ```
 
-**Setup steps**:
+**Setup steps for GCP (Firestore)**:
 1. Create a Firestore database in Google Cloud
 2. Add credentials to `sklearn-basic/firestore.json`
-3. Configure the KV backend in your project config
+3. Set `cache.backend.type` to `gcp` and set `gcp_project` and `credentials_json` under `cache.backend`
 
-See the [Backends](../advanced/backends.md) documentation for more details on KV backends and setup instructions.
+See the [Backends](../advanced/backends.md) documentation for more details and setup instructions.
 
 ## Running on a Cluster
 

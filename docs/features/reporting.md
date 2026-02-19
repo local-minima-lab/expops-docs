@@ -147,9 +147,9 @@ Dynamic charts provide real-time, interactive visualizations.
 
 **Configuration**: Dynamic charts are defined as **pipeline processes** in `project_config.yaml` (under `experiment.parameters.pipeline.processes`). Each dynamic chart process must have:
 
-- `script` — a key that resolves to your JS chart script (e.g. `reporting_js`), defined under `scripts:` at the top of the config
+- `script` - a key that resolves to your JS chart script (e.g. `reporting_js`), defined under `scripts:` at the top of the config
 - `chart_type: "dynamic"`
-- `probe_paths` — same XPath semantics as static charts (see [Probe paths](#probe-paths) below)
+- `probe_paths` - same XPath semantics as static charts (see [Probe paths](#probe-paths) below)
 
 ### Example
 

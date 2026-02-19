@@ -55,5 +55,3 @@ See [Chart Generation](charts.md) for details.
 
 - **requirements.txt**: Main dependencies for training/inference
 - **charts/requirements.txt**: Reporting-specific dependencies
-
-See [Dependencies](dependencies.md) for details.

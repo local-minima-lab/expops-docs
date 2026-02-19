@@ -75,6 +75,7 @@ def train(prep_data: SerializableData):
 ```
 
 **Step Notes**:
+
 - Steps are defined **inside** process functions
 - Steps can accept explicit parameters passed from the process
 - Steps execute sequentially within their parent process
@@ -97,11 +98,13 @@ log_metric("loss", 0.05)
 The `step` parameter is **optional** and controls how metrics are tracked over time:
 
 **When `step` is omitted (default behavior)**:
+
 - The system automatically increments from the largest existing step for that metric
 - If no previous metrics exist for that metric name, it starts at step `1`
 - Each subsequent call without `step` increments by 1
 
 **When `step` is explicitly provided**:
+
 - You control the step number yourself
 - Useful for training loops, epochs, iterations, or any custom progression
 - Steps can be any positive integer

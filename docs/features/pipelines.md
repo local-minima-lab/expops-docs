@@ -24,6 +24,7 @@ experiment:
 Each line defines edges: the first token is the source process, the second token is the target process that depends on it.
 
 **Example**: The above creates a DAG where:
+
 - `feature_engineering` runs first
 - `preprocess` depends on `feature_engineering`
 - `train_model` depends on `preprocess`
@@ -63,6 +64,7 @@ processes:
 ```
 
 **Process attributes**:
+
 - `name`: Unique process identifier (must match names in `process_adjlist`)
 - `description`: Human-readable description
 - `script` (optional): Key from the top-level `scripts` section to use for this process. Defaults to the first key in `scripts` if omitted. See [Configuration](../project-structure/configuration.md) for the `scripts` section and defaults.
@@ -104,6 +106,7 @@ def define_feature_engineering_process(test_size: float = 0.2):
 ```
 
 **Key points**:
+
 - Process functions declare explicit parameters for upstream output keys and process parameter keys
 - Steps are defined inside the process function using `@step()` decorator
 - Steps execute sequentially within a process
@@ -128,6 +131,7 @@ For `data_aggregation` processes, duplicate upstream keys are provided as a dict
 ## Execution Order
 
 ExpOps automatically determines execution order based on:
+
 - **DAG structure**: Defined by `process_adjlist`
 - **Process dependencies**: Inferred from the adjacency list
 - **Available resources**: Distributed across workers when using cluster execution

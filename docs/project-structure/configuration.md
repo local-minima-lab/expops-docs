@@ -96,4 +96,3 @@ For detailed information on each configuration section:
 See template projects for complete examples:
 - **`sklearn-basic`**: Basic local execution setup
 - **`premier-league`**: Comprehensive setup with cluster configuration and dynamic charts
-

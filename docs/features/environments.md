@@ -9,6 +9,7 @@ ExpOps supports multiple environment managers:
 ### venv
 
 Python's built-in virtual environment manager:
+
 - Default for most projects
 - Lightweight and fast
 - Python 3.8+ required
@@ -16,16 +17,9 @@ Python's built-in virtual environment manager:
 ### conda
 
 Conda environment manager:
+
 - Useful for complex dependencies
 - Supports non-Python dependencies
-
-## Automatic Management
-
-Environments are automatically:
-- Created when needed
-- Updated when dependencies change
-- Activated during execution
-- Isolated per project
 
 ## Configuration
 
@@ -46,6 +40,7 @@ Inline requirements or conda dependencies in the config are not supported; use f
 ## Benefits
 
 Environment isolation provides:
+
 - **Dependency isolation**: No conflicts between projects
 - **Reproducibility**: Consistent environments
 - **Clean separation**: Training vs. reporting dependencies
