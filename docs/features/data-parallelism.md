@@ -5,7 +5,7 @@ Use it when a process returns row-splittable data (pandas DataFrame, numpy array
 
 ## Config
 
-### Split from upstream (no `code_function`)
+### Split from upstream (no `code`)
 
 ```yaml
 processes:
@@ -17,16 +17,16 @@ processes:
 ```
 
 - `data_name` tells the system which upstream output key to split.
-- The split process has no `code_function`; it will merge its upstream outputs and split the `data_name` key.
-- `script` is optional for split nodes with no `code_function`.
+- The split process has no `code`; it will merge its upstream outputs and split the `data_name` key.
+- The script path for such helper split nodes is optional.
 
-### User-defined splitter (`code_function`)
+### User-defined splitter (`code`)
 
 ```yaml
 processes:
   - name: "nn_data_parallel"
     description: "Custom splitter"
-    code_function: "define_nn_data_parallel"
+    code: "define_nn_data_parallel"
     data_parallelism:
       size: [50, 20, 20]
 ```
@@ -42,7 +42,7 @@ def define_nn_data_parallel():
 
 - Return a **list of rows**; the framework will split it based on `size`.
 - If `data_name` is omitted and the function returns a list, the data key defaults to `data`.
-- `script_path` is required when using `code_function`.
+- `script_path` is required when using an explicit `code` function.
 
 ### Size formats
 
@@ -57,10 +57,10 @@ Add a dedicated aggregation process to collapse the **latest** data-parallel lay
 processes:
   - name: "aggregate_results"
     data_aggregation: true
-    code_function: "define_aggregate_results"
+    code: "define_aggregate_results"
 ```
 
-Aggregation processes **must** define a `code_function`.
+Aggregation processes **must** define a `code` function reference.
 
 ### Input shape at aggregation
 
@@ -76,8 +76,7 @@ def define_aggregate_results(df):
 ## Notes
 
 - Data parallelism duplicates downstream nodes in the graph and is visible in the UI.
-- Chart probe paths can use selector syntax to automatically expand to data-parallel
-  partitions; see the chart documentation for details.
+- Chart probe paths can use XPath selector syntax over the pipeline tree (including `@partition='p1'` predicates) to automatically expand to data-parallel partitions; see the chart documentation for details.
 - Multiple data-parallel layers are supported. Each aggregation collapses only the
   most recent data-parallel layer; outer layers are still represented by separate
   process nodes.

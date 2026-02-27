@@ -46,12 +46,12 @@ Each process must be explicitly defined with its configuration:
 processes:
   - name: "feature_engineering"
     description: "Load and prepare data"
-    code_function: "define_feature_engineering_process"
+    code: "define_feature_engineering_process"
     environment: "my-project-env"
   
   - name: "train_model"
     description: "Train the model"
-    code_function: "define_training_process"
+    code: "define_training_process"
     environment: "my-project-env"
     parameters:
       learning_rate: 0.001
@@ -67,8 +67,10 @@ processes:
 
 - `name`: Unique process identifier (must match names in `process_adjlist`)
 - `description`: Human-readable description
-- `script` (optional): Key from the top-level `scripts` section to use for this process. Defaults to the first key in `scripts` if omitted. See [Configuration](../project-structure/configuration.md) for the `scripts` section and defaults.
-- `code_function`: Name of the Python function that defines the process (see below). Defaults to the process name if omitted, so you can omit it when the function name matches the process name.
+- `code` (optional): Unified code reference for the process:
+  - `code: "script_key.function_name"` uses the script registered under `script_key` in the top-level `scripts` map and calls `function_name`.
+  - `code: "function_name"` uses the first script key in `scripts` and calls `function_name`.
+  - If omitted, ordinary processes default to a function with the same name as the process on the default script, while pure split/aggregation helper nodes can omit `code` entirely.
 - `environment`: Environment name to use (defaults to the first environment if omitted)
 - `parameters`: Optional parameters injected by name into the process function
 - `type`: Optional type (e.g., `"chart"` for chart generation processes)
@@ -77,7 +79,7 @@ processes:
 
 ## Process Functions
 
-Processes are implemented in Python using the `@process()` decorator. The function name must match the `code_function` in the config:
+Processes are implemented in Python using the `@process()` decorator. The function name referenced in `code` (or the process name when `code` is omitted) must match the registered process:
 
 ```python
 from expops.core import process, step, 

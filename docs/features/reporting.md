@@ -69,8 +69,8 @@ reporting:
   charts:
     - name: "my_chart"
       probe_paths:
-        train: "//*[@name=\"train_model\"]"
-        eval: "//*[@name=\"evaluate_model\"]"
+        train: "//*[@name='train_model']"
+        eval: "//*[@name='evaluate_model']"
 ```
 
 The chart function receives:
@@ -100,38 +100,15 @@ Common patterns:
 
 | Goal | XPath pattern |
 |------|----------------|
-| Process by name | `//*[@name="process_name"]` |
-| Process + step | `//*[@name="process_name"]/step[@name="step_name"]` or `//*[@name="process_name"]/*[@name="step_name"]` |
-| Specific partition/seed | `//*[@partition="p1"]/*[@seed="41"]/*[@name="process_name"]` |
-| Any partition/seed | `//*[@partition]/*[@seed]/*[@name="process_name"]` |
-
-In `project_config.yaml`, probe paths are double-quoted YAML strings, so escape each `"` as `\"` (see examples below).
-
-**Examples from projects:**
-
-- **sklearn-basic** (simple pipeline, no steps):
-
-```yaml
-probe_paths:
-  train: "//*[@name=\"train_model\"]"
-  eval: "//*[@name=\"evaluate_model\"]"
-```
-
-- **premier-league** (process + step; partition and seed):
-
-```yaml
-probe_paths:
-  feat: "//*[@name=\"feature_engineering_generic\"]/step[@name=\"feature_analysis\"]"
-  nn_a_p1_seed41: "//*[@partition=\"p1\"]/*[@seed=\"41\"]/*[@name=\"nn_training_a\"]/*[@name=\"train_and_evaluate_nn_classifier\"]"
-  linear: "//*[@partition]/*[@seed]/*[@name=\"linear_inference\"]/*[@name=\"test_inference_classification\"]"
-  nn_best: "//*[@partition]/*[@seed]/*[@name=\"nn_best_inference\"]/step[@name=\"test_inference_classification\"]"
-  ensemble: "//*[@partition]/*[@seed]/*[@name=\"ensemble_inference\"]"
-```
+| Process by name | `//*[@name='process_name']` |
+| Process + step | `//*[@name='process_name']/*[@name='step_name']` or `//*[@name='step_name']` if the step name is unique among process names |
+| Specific partition/seed | `//*[@partition='p1']/*[@seed='41']/*[@name='process_name']` |
+| Any partition/seed | `//*[@partition]/*[@seed]/*[@name='process_name']` |
 
 #### How keys map to chart metrics
 
 - **One XPath match**: The config key is preserved (e.g. `train` → `metrics['train']`).
-- **Multiple XPath matches**: Each resolved probe path becomes a key (e.g. `nn_training_a__p1_seed41/train_and_evaluate_nn_classifier`). Chart code can iterate over keys or use prefix/grouping logic to aggregate across partitions or seeds.
+- **Multiple XPath matches**: Each resolved probe path becomes a key. The key is the canonical XPath-style identifier for that process/step (e.g. `"//*[@partition='p1']/*[@seed='41']/*[@name='nn_training_a']/step[@name='train_and_evaluate_nn_classifier']"`). Chart code can iterate over keys or use prefix/grouping logic to aggregate across partitions or seeds.
 - **Literal path**: Single key as in config (e.g. `train: "train_model"` → `metrics['train']`).
 
 ### Output
@@ -147,7 +124,7 @@ Dynamic charts provide real-time, interactive visualizations.
 
 **Configuration**: Dynamic charts are defined as **pipeline processes** in `project_config.yaml` (under `experiment.parameters.pipeline.processes`). Each dynamic chart process must have:
 
-- `script` - a key that resolves to your JS chart script (e.g. `reporting_js`), defined under `scripts:` at the top of the config
+- `code` - a unified code reference that points to your JS chart script and function (e.g. `code: "reporting_js.nn_losses"`), where `reporting_js` is defined under `scripts:` at the top of the config
 - `chart_type: "dynamic"`
 - `probe_paths` - same XPath semantics as static charts (see [Probe paths](#probe-paths) below)
 
@@ -158,7 +135,7 @@ Dynamic charts provide real-time, interactive visualizations.
 ```yaml
 # Under experiment.parameters.pipeline.processes:
         - name: "nn_losses"
-          script: "reporting_js"
+          code: "reporting_js.nn_losses"
           environment: "premier-league-env-reporting"
           chart_type: "dynamic"
           probe_paths: ...

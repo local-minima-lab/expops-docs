@@ -49,8 +49,6 @@ The `charts/` directory contains visualization code:
 - **plot_metrics.py**: Static PNG chart generation
 - **plot_metrics.js**: Dynamic interactive charts
 
-See [Chart Generation](charts.md) for details.
-
 ### Dependencies
 
 - **requirements.txt**: Main dependencies for training/inference

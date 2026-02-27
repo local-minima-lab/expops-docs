@@ -41,8 +41,13 @@ reporting:         # Chart entrypoints, probe paths, reporting environment
 
 You can omit some process fields and rely on defaults to keep config minimal:
 
-- **Script**: If a process does not set `script`, the **first key** in the top-level `scripts` section is used. List your main script first so most processes need no `script` field.
-- **code_function**: If omitted, it defaults to the process **name**. When your Python function name matches the process name (e.g. process `train_model` and function `train_model`), you can omit `code_function`.
+- **Scripts section**: The top-level `scripts` map still defines script keys to file paths. The **first key** is treated as the default script for processes that do not explicitly specify a script key in `code`.
+- **Code field**: Each process may define a single `code` field instead of separate `script` and `code_function` fields:
+  - `code: "script_key.function_name"` → use the script registered under `script_key` and call `function_name` from that module.
+  - `code: "function_name"` → use the first script key in `scripts` and call `function_name`.
+- **Omitted code**:
+  - For ordinary processes, if `code` is omitted the system assumes a function with the same name as the process, loaded from the default script.
+  - For data/seed split helper nodes (processes that only define `data_parallelism` or `seed_parallelism` and no `code`), the system treats them as function-less split nodes.
 
 Example minimal process that uses both defaults:
 
@@ -88,7 +93,7 @@ For detailed information on each configuration section:
 - **Process & Step Code**: [Model Code](model-code.md)
 - **Caching**: [Caching & Reproducibility](../features/caching.md)
 - **Backends**: [Backends](../advanced/backends.md)
-- **Reporting/Charts**: [Reporting Features](../features/reporting.md) and [Chart Generation](charts.md)
+- **Reporting/Charts**: [Reporting Features](../features/reporting.md)
 - **Cluster Execution**: [Cluster Configuration](../advanced/cluster-config.md) and [Distributed Computing](../features/distributed.md)
 
 ## Example Configurations
