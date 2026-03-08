@@ -20,6 +20,7 @@ environment:       # Named environments (requirements/env files + type)
 reproducibility:   # Random seed configuration
 data:              # Data sources and data path for hashing
 experiment:        # Model framework, paths, parameters, pipeline, cache
+execution:         # Optional: e.g. execution.workspace.base_dir (temp dir; default tmp)
 reporting:         # Chart entrypoints, probe paths, reporting environment
 ```
 
@@ -36,6 +37,7 @@ reporting:         # Chart entrypoints, probe paths, reporting environment
   - See [Caching & Reproducibility](../features/caching.md) and [Backends](../advanced/backends.md) for details
 - **`reporting`**: Chart entrypoints and chart definitions
   - See [Reporting Features](../features/reporting.md) for details
+- **`execution.workspace`**: Optional. Per-process temporary workspace base path. Set `base_dir` to control where process run directories are created (e.g. `base_dir: "/tmp"`). Default is `tmp` (i.e. `/tmp` on Unix).
 
 ### Defaults that reduce config
 

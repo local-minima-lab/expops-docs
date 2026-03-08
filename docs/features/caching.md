@@ -7,12 +7,12 @@ ExpOps provides intelligent multi-level caching and reproducibility guarantees. 
 When caching is enabled, the platform separates **lightweight manifests** from **heavy artifacts**:
 
 - **Step/process manifests (`.pkl` files)**:
-    - Stored under a cache prefix (for example `cache/steps/steps/` in GCS).
+    - In GCS, stored under a project-scoped cache path: `gs://<bucket>/<project_id>/cache/steps/<run_id>/...`.
     - Contain small Python dictionaries describing the result of a step or process.
     - Heavy artifacts (models, large arrays) are represented as *references* rather than inlined objects.
-- **Models (`models/` prefix)**:
+- **Models (`model_spill/` prefix)**:
     - Any recognized model object (for example, most `sklearn` and `xgboost` estimators) is always serialized separately.
-    - Stored as `.joblib` blobs under a `models/<run_id>/<process_name>/...` path.
+    - Stored as `.joblib` blobs under a `model_spill/<process_name>/...` path.
 - **Payloads (`payloads/` prefix)**:
     - Large array-like payloads (NumPy arrays, lists/tuples coercible to arrays) above a small size threshold are stored as compressed `.npz` blobs.
 
@@ -66,7 +66,26 @@ Remote backend for shared caching:
 - Persistent storage.
 - Requires GCP credentials.
 
-When an object store is configured, manifests are written as `.pkl` blobs and heavy artifacts are written under the `models/` and `payloads/` prefixes in the same bucket. When no object store is configured, all of these artifacts are stored on the local filesystem under the project cache directory.
+When an object store is configured, manifests are written as `.pkl` blobs and heavy artifacts are written under the `model_spill/` and `payloads/` prefixes in the same bucket. When no object store is configured, all of these artifacts are stored on the local filesystem under the project cache directory.
+
+With GCS enabled, the layout within the bucket is project-scoped:
+
+- Step/process manifests are stored under `gs://<bucket>/<project_id>/cache/steps/<run_id>/...`.
+- Spilled models are stored under `gs://<bucket>/<project_id>/model_spill/<process_name>/...`.
+- Spilled large payloads are stored under `gs://<bucket>/<project_id>/payloads/<run_id>/<process_name>/...`.
+
+When no object store is configured, manifests and heavy artifacts are stored on the local filesystem under the project's hidden runtime cache directory, typically under:
+
+- `.<project_id>/cache/<version_hash>/<encoded_probe_path>/steps/` for step/process manifests.
+- `.<project_id>/cache/<version_hash>/<encoded_probe_path>/model_spill/` for spilled models.
+- `.<project_id>/cache/<version_hash>/<encoded_probe_path>/payloads/` for spilled large payloads.
+
+**Artifacts** (charts, reproducibility outputs) use the same version/probe layout for consistency:
+
+- **Local**: `.<project_id>/artifacts/<version_hash>/<encoded_probe_path>/<filename>.png`
+- **GCS**: `gs://<bucket>/<project_id>/artifacts/<version_hash>/<encoded_probe_path>/<filename>.png`
+
+Both cache and artifacts share the same `version_hash` (from project config + scripts) and `encoded_probe_path` (from process/step identity).
 
 ## Configuration
 

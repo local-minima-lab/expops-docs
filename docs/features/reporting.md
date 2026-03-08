@@ -16,8 +16,8 @@ Functions decorated with `@chart()` generate visualizations. **Chart functions h
 
 **Every static chart function MUST:**
 1. Accept `metrics` as the first parameter (Dict[str, Any])
-2. Accept `ctx` as the second parameter (ChartContext)
-3. Use `ctx.savefig()` to save figures
+2. Accept `ctx` as the second parameter (ChartContext), for metrics and optional context
+3. Use `plt.savefig()` to save figures (the process runs with cwd set to the output directory; all files written there are synced to artifacts)
 
 ```python
 from expops.reporting import chart, ChartContext
@@ -29,7 +29,7 @@ def plot_metrics(metrics: Dict[str, Any], ctx: ChartContext) -> None:
     """
     Chart function signature requirements:
     - metrics: Dict containing metrics from probe_paths (REQUIRED)
-    - ctx: ChartContext for saving figures (REQUIRED)
+    - ctx: ChartContext for metrics and run context (REQUIRED)
     - Returns: None (void function)
     """
     # Access metrics directly from the metrics dict
@@ -45,8 +45,8 @@ def plot_metrics(metrics: Dict[str, Any], ctx: ChartContext) -> None:
     fig, ax = plt.subplots(figsize=(10, 6))
     # ... plotting code ...
     
-    # MUST use ctx.savefig() to save the figure
-    ctx.savefig('plot_metrics.png', fig=fig, dpi=150)
+    # Use plt.savefig() with a relative path; cwd is the process output dir
+    plt.savefig('plot_metrics.png', dpi=150)
     plt.close(fig)
 ```
 
@@ -77,6 +77,7 @@ The chart function receives:
 ```python
 @chart()
 def my_chart(metrics: Dict[str, Any], ctx: ChartContext) -> None:
+    import matplotlib.pyplot as plt
     # metrics['train'] contains metrics from train_model process
     train_data = metrics.get('train', {})
     
@@ -113,10 +114,11 @@ Common patterns:
 
 ### Output
 
-Static charts produce image files (PNG) saved to:
+Static charts produce image files (PNG) saved under the unified artifacts layout:
 ```
-artifacts/charts/<run-id>/
+.<project_id>/artifacts/<version_hash>/<encoded_probe_path>/<chart_name>.png
 ```
+In GCS: `gs://<bucket>/<project_id>/artifacts/<version_hash>/<encoded_probe_path>/<chart_name>.png`
 
 ## Dynamic Charts
 

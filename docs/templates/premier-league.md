@@ -20,18 +20,32 @@ expops create my-project --template premier-league
 
 ```
 my-project/
+├── .my-project/
+│   ├── envs/
+│   ├── logs/
+│   ├── cache/<version_hash>/<encoded_probe_path>/
+│   ├── artifacts/<version_hash>/<encoded_probe_path>/
+│   └── metrics.sqlite
 ├── configs/
 │   ├── project_config.yaml
 │   └── compute_config.yaml
-├── models/
-│   └── premier_league_model.py
-├── charts/
-│   ├── plot_metrics.py
-│   ├── plot_metrics.js
-│   └── requirements.txt
+├── src/
+│   ├── models/
+│   │   └── premier_league_model.py
+│   └── charts/
+│       ├── plot_metrics.py
+│       └── plot_metrics.js
 ├── requirements.txt
+├── requirements-charts.txt
 └── data/
+    └── England CSV.csv
 ```
+
+When you run the template, its virtual environments are created under the
+project-local hidden `.my-project/envs/` directory (for example
+`.my-project/envs/premier-league-env`). The older workspace-level `.venvs/`
+directory is kept only for legacy, non-project usage and is no longer used
+for project runs.
 
 ## Features Demonstrated
 

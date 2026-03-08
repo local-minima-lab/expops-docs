@@ -67,7 +67,7 @@ experiment:
       # object_store:
       #   type: gcs
       #   bucket: <your-gcs-bucket-name>
-      #   prefix: sklearn-basic/cache/steps
+      #   # Manifests will be stored under gs://<bucket>/<project_id>/cache/steps/ automatically.
 ```
 
 **Setup steps for GCP (Firestore)**:

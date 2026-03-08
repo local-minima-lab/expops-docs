@@ -10,6 +10,13 @@ Templates provide a pre-configured project structure with example code:
 expops create my-project --template sklearn-basic
 ```
 
+You can also create *in the current directory* (project name inferred from the folder name):
+
+```bash
+mkdir my-project && cd my-project
+expops create --template sklearn-basic
+```
+
 Available templates:
 - `sklearn-basic`: Runnable project skeleton with a tiny sklearn model
 - `premier-league`: Comprehensive ML project with cluster config and dynamic charts
@@ -26,6 +33,13 @@ expops create my-project
 
 This creates a minimal project structure that you can customize.
 
+You can also create *in the current directory* (project name inferred from the folder name):
+
+```bash
+mkdir my-project && cd my-project
+expops create
+```
+
 ## Project Structure
 
 After creation, your project will have the following structure:
@@ -33,14 +47,27 @@ After creation, your project will have the following structure:
 ```
 my-project/
 ├── .gitignore
+├── .my-project/
+│   ├── envs/
+│   ├── logs/
+│   ├── cache/<version_hash>/<encoded_probe_path>/
+│   ├── artifacts/<version_hash>/<encoded_probe_path>/
+│   └── metrics.sqlite
 ├── configs/
 │   └── project_config.yaml
-├── models/
-├── charts/
+├── src/
+│   ├── models/
+│   └── charts/
 ├── data/
 ├── requirements.txt
 └── ...
 ```
+
+The `.my-project/envs/` directory holds the Python virtual environments for
+this project (for example `.my-project/envs/my-project-env`). Older versions
+of the platform used a workspace-level `.venvs/` folder; that location is now
+deprecated for project runs, and new environments are created only under each
+project’s hidden `.my-project/envs/` directory.
 
 ## Configuration Notes
 

@@ -20,16 +20,30 @@ expops create my-project --template sklearn-basic
 
 ```
 my-project/
+├── .my-project/
+│   ├── envs/
+│   ├── logs/
+│   ├── cache/<version_hash>/<encoded_probe_path>/
+│   ├── artifacts/<version_hash>/<encoded_probe_path>/
+│   └── metrics.sqlite
 ├── configs/
 │   └── project_config.yaml
-├── models/
-│   └── sklearn_model.py
-├── charts/
-│   ├── plot_metrics.py
-│   └── requirements.txt
+├── src/
+│   ├── models/
+│   │   └── model.py
+│   └── charts/
+│       └── plot_metrics.py
 ├── requirements.txt
+├── requirements-charts.txt
 └── data/
+    └── train.csv
 ```
+
+Project-specific Python virtual environments are created under the hidden
+runtime directory `.my-project/envs/` (for example
+`.my-project/envs/sklearn-basic-env`). Earlier versions of the platform used
+a workspace-level `.venvs/` directory; that location is now deprecated for
+project runs.
 
 ## Running
 
@@ -49,6 +63,6 @@ The template uses:
 ## Customization
 
 You can customize:
-- Experiment parameters in `project_config.yaml`
-- Pipeline steps in `models/sklearn_model.py`
-- Chart visualizations in `charts/plot_metrics.py`
+- Experiment parameters in `configs/project_config.yaml`
+- Pipeline steps in `src/models/model.py`
+- Chart visualizations in `src/charts/plot_metrics.py`
