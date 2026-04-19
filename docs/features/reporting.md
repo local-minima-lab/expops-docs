@@ -2,6 +2,12 @@
 
 This guide covers how to write chart code for ExpOps. For configuration details, see the Probe paths and Chart Dependencies sections below.
 
+## Component Charts
+
+The [expops-matplotlib](../components/matplotlib.md) library provides `BarChart` and `Histogram` chart components that run as pipeline processes — no Python chart code required. If you only need standard bar charts or histograms, start there.
+
+The rest of this page covers custom `@chart()` functions, which give you full control over matplotlib output.
+
 ## Static Charts
 
 Static charts generate PNG image files that are saved to disk.

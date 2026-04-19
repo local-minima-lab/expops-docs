@@ -1,105 +1,122 @@
 # Backends
 
-ExpOps supports multiple backends for caching and storage.
-
-## Cache Backends
-
-### Local Filesystem
-
-Default backend for local development:
-
-```yaml
-experiment:
-  parameters:
-    cache:
-      backend: local
-```
-
-**Features**:
-- Fast access
-- No external dependencies
-- Limited to single machine
-- No web UI metrics support
-
-The default cache/KV backend is local (SQLite), which is persistent and works across process restarts.
-
-### Google Cloud Storage (GCS)
-
-Remote backend for shared caching:
-
-```yaml
-experiment:
-  parameters:
-    cache:
-      backend: gcs
-      bucket: my-bucket
-```
-
-**Features**:
-- Cross-machine sharing
-- Persistent storage
-- Web UI support
-- Requires GCP credentials
-
-**Setup**:
-1. Create GCS bucket
-2. Set up credentials (e.g. `firestore.json` in project root)
-3. Configure bucket name in config
-
-### Custom Backends
-
-Implement custom backends for other storage systems.
+ExpOps supports multiple backends for caching, metrics storage, and artifact storage. Backend settings live under `experiment.cache` in `configs/project_config.yaml`.
 
 ## KV Backends
 
-Key-value backends for metrics, metadata, and cache indexing:
+The KV (key-value) backend stores run metadata, step status, and logged metrics. It is the primary backend for the web UI and caching.
 
-The KV backend stores cache metadata (indexes that track where cached results are located). This is separate from the cache backend which stores the actual cached data files.
+**Default**: If `backend` is not specified, ExpOps uses a local SQLite store under the project's runtime directory (`.my-project/metrics.sqlite`). This is persistent across process restarts and works without any external dependencies.
 
-**Default**: If not specified, the system uses a local (SQLite) KV store, which is persistent. For remote or shared setups, configure Firestore.
-
-### Firestore
-
-Google Cloud Firestore:
+### Local (SQLite)
 
 ```yaml
 experiment:
-  parameters:
-    cache:
-      backend: gcs
-      kv_backend: firestore
+  cache:
+    backend:
+      type: local
 ```
 
 **Features**:
-- Persistent cache metadata
-- Enables caching across runs
-- Web UI metrics support
-- Requires GCP credentials
+- No external dependencies
+- Persistent across restarts
+- Supports the local web UI via SSE streaming
+- Limited to a single machine
 
-**Setup**:
-1. Create Firestore database
-2. Add credentials to `firestore.json` in the project root
-3. Configure in project config
-
-## Configuration
-
-Backend settings in `configs/project_config.yaml`:
+### GCP (Firestore)
 
 ```yaml
 experiment:
-  parameters:
-    cache:
-      backend: gcs  # or local, custom
-      bucket: my-bucket  # for GCS
-      kv_backend: firestore  # optional: firestore  (default is local SQLite)
+  cache:
+    backend:
+      type: gcp
+      gcp_project: my-gcp-project-id
+      credentials_json: firestore.json
 ```
 
-**Note**: The `kv_backend` setting controls where cache metadata is stored. The default is local (SQLite). Use `firestore` for remote or shared setups.
+**Features**:
+- Persistent metrics accessible across machines
+- Enables real-time Firestore listeners in the web UI
+- Requires a GCP project with Firestore enabled
 
-## Web UI Requirements
+**Setup**:
 
-For web UI metrics and charts:
-- Use remote backend (GCS, etc.)
-- Configure KV backend for metrics
-- Ensure credentials are set up
+1. Create a Firestore database in your GCP project (Native mode)
+2. Create a service account with the **Cloud Datastore User** role and download its credentials JSON
+3. Place the credentials file in the project root (e.g. `firestore.json`)
+4. Set `gcp_project` and `credentials_json` in the backend config
 
+```yaml
+experiment:
+  cache:
+    backend:
+      type: gcp
+      gcp_project: my-gcp-project-id
+      credentials_json: firestore.json   # path relative to project root
+```
+
+---
+
+## Object Store Backends
+
+The object store holds cache artifacts and chart outputs. Configure it under `experiment.cache.object_store`.
+
+**Default**: Artifacts are stored on the local filesystem under `.my-project/artifacts/`. No configuration needed for local development.
+
+### GCS (Google Cloud Storage)
+
+```yaml
+experiment:
+  cache:
+    backend:
+      type: gcp
+      gcp_project: my-gcp-project-id
+      credentials_json: firestore.json
+    object_store:
+      type: gcs
+      bucket: my-gcs-bucket-name
+```
+
+**Features**:
+- Artifacts stored at `gs://<bucket>/<project_id>/artifacts/<version_hash>/...`
+- Cache manifests stored at `gs://<bucket>/<project_id>/cache/steps/`
+- Shared across machines running the same project
+
+**Setup**:
+
+1. Create a GCS bucket in the same GCP project
+2. Grant the service account **Storage Object Admin** on the bucket
+3. Add the `object_store` block to the cache config
+
+---
+
+## Full GCP Configuration Example
+
+```yaml
+experiment:
+  cache:
+    backend:
+      type: gcp
+      gcp_project: my-gcp-project-id
+      credentials_json: firestore.json
+    object_store:
+      type: gcs
+      bucket: my-gcs-bucket-name
+```
+
+---
+
+## Web UI Backend Requirements
+
+The web UI reads the backend config from `project_config.yaml` to decide which listener to use:
+
+- **`type: local`** → the run server streams updates via SSE
+- **`type: gcp`** → the frontend connects directly to Firestore
+
+For Firestore-based live updates, the web UI also needs a Firebase API key. Provide it via one of:
+
+- `firebase_api_key` inline in the backend config
+- `firebase_api_key_file` — path to a file containing the key (relative to project root)
+- `FIREBASE_API_KEY` or `NEXT_PUBLIC_FIREBASE_API_KEY` environment variable
+
+See [Local Web UI](../web-ui/local-ui.md) for details on the web server and its API.
