@@ -21,7 +21,7 @@ Available templates:
 - `sklearn-basic`: Runnable project skeleton with a tiny sklearn model
 - `premier-league`: Comprehensive ML project with cluster config and dynamic charts
 
-See the [Templates](../templates/available-templates.md) section for more details.
+See the [Templates](../project-templates/available-templates.md) section for more details.
 
 ## Create from Scratch
 

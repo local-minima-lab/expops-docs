@@ -73,9 +73,9 @@ nav:
     - Local Web UI: web-ui/local-ui.md
     - Listener SDK: web-ui/listener-sdk.md
   - Templates:
-    - Available Templates: templates/available-templates.md
-    - sklearn-basic: templates/sklearn-basic.md
-    - Premier League: templates/premier-league.md
+    - Available Templates: project-templates/available-templates.md
+    - sklearn-basic: project-templates/sklearn-basic.md
+    - Premier League: project-templates/premier-league.md
   - Advanced Topics:
     - Backends: advanced/backends.md
 

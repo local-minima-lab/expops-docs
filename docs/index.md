@@ -31,7 +31,7 @@ This guide is organized into the following sections:
 - **[Getting Started](getting-started/creating-a-project.md)**: Creating projects
 - **[Project Structure](project-structure/overview.md)**: Understanding the project layout
 - **[Features](features/caching.md)**: Detailed feature documentation
-- **[Templates](templates/sklearn-basic.md)**: Available project templates
+- **[Templates](project-templates/sklearn-basic.md)**: Available project templates
 - **[Web UI](web-ui/local-ui.md)**: Using the local web interface
 
 ## Installation
