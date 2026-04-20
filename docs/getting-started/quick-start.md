@@ -19,6 +19,7 @@ expops create sklearn-basic --template sklearn-basic
 ```
 
 This creates a new project at `sklearn-basic/` with:
+
 - Configuration files
 - Model code
 - Chart generation scripts
@@ -67,13 +68,14 @@ experiment:
       # object_store:
       #   type: gcs
       #   bucket: <your-gcs-bucket-name>
-      #   # Manifests will be stored under gs://<bucket>/<project_id>/cache/steps/ automatically.
 ```
 
 **Setup steps for GCP (Firestore)**:
+
 1. Create a Firestore database in Google Cloud
 2. Add credentials to `sklearn-basic/firestore.json`
 3. Set `cache.backend.type` to `gcp` and set `gcp_project` and `credentials_json` under `cache.backend`
+4. Add your Firebase API key via `firebase_api_key` in the backend config, `firebase_api_key_file`, or the `FIREBASE_API_KEY` environment variable (required for the listener SDK / web app)
 
 See the [Backends](../advanced/backends.md) documentation for more details and setup instructions.
 

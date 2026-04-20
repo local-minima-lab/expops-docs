@@ -67,6 +67,7 @@ Replace `<Estimator>` with any sklearn classifier or regressor class name:
 ```
 
 Other estimator examples:
+
 - `sklearn.RandomForestClassifier.fit_predict`
 - `sklearn.MLPClassifier.fit_predict`
 - `sklearn.GradientBoostingClassifier.fit_predict`

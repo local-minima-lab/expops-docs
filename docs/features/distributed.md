@@ -50,6 +50,7 @@ Cluster settings are defined in `configs/compute_config.yaml`:
 ## Resource Management
 
 ExpOps automatically:
+
 - Allocates resources to workers
 - Manages job submission
 - Handles worker failures

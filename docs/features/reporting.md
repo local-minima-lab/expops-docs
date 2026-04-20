@@ -21,6 +21,7 @@ Functions decorated with `@chart()` generate visualizations. **Chart functions h
 #### Required Function Signature
 
 **Every static chart function MUST:**
+
 1. Accept `metrics` as the first parameter (Dict[str, Any])
 2. Accept `ctx` as the second parameter (ChartContext), for metrics and optional context
 3. Use `plt.savefig()` to save figures (the process runs with cwd set to the output directory; all files written there are synced to artifacts)

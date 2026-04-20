@@ -27,6 +27,7 @@ Functions decorated with `@process()` define pipeline processes. **Process funct
 #### Required Function Signature
 
 **Every process function MUST:**
+
 1. Declare explicit parameters for the upstream output keys and hyperparameter keys it needs
 2. Return a dictionary (required - non-dict returns will raise an error)
 3. Return only serializable data (dictionaries, lists, primitives - not complex objects)
@@ -134,5 +135,6 @@ def define_downstream_process(model, X_test):
 ## Example
 
 See template projects for complete examples:
+
 - `sklearn-basic`: Simple sklearn pipeline
 - `premier-league`: Complex pipeline with multiple steps

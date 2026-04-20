@@ -33,6 +33,7 @@ For GCP-backed backends (e.g. Firestore), set the path to your credentials file 
 ### Configuration Files
 
 The `configs/` directory contains all project configuration:
+
 - **project_config.yaml**: Main configuration (required)
 - **compute_config.yaml**: Cluster execution settings (optional)
 
@@ -41,6 +42,7 @@ See [Configuration Files](configuration.md) for details.
 ### Model Code
 
 The `src/` directory contains your ML pipeline and reporting scripts. The main model script (e.g. `<model_name>.py`) is referenced in `project_config.yaml` under `scripts.main`:
+
 - Process definitions with `@process()` decorator
 - Step functions with `@step()` decorator
 - Pipeline logic and data transformations
@@ -50,6 +52,7 @@ See [Model Code](model-code.md) for details.
 ### Chart Generation
 
 Chart scripts live under `src/` and are referenced in config (`scripts.reporting`, `scripts.reporting_js`):
+
 - **plot_metrics.py**: Static PNG chart generation
 - **plot_metrics.js**: Optional dynamic interactive charts
 

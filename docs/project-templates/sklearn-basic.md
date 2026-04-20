@@ -56,6 +56,7 @@ expops run my-project --local
 ## Configuration
 
 The template uses:
+
 - **Local cache backend**: Fast local development
 - **venv environment**: Python virtual environment
 - **Basic pipeline**: Load → Preprocess → Train → Evaluate
@@ -63,6 +64,7 @@ The template uses:
 ## Customization
 
 You can customize:
+
 - Experiment parameters in `configs/project_config.yaml`
 - Pipeline steps in `src/models/model.py`
 - Chart visualizations in `src/charts/plot_metrics.py`

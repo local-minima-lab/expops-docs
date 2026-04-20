@@ -18,6 +18,7 @@ expops create --template sklearn-basic
 ```
 
 Available templates:
+
 - `sklearn-basic`: Runnable project skeleton with a tiny sklearn model
 - `premier-league`: Comprehensive ML project with cluster config and dynamic charts
 

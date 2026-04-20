@@ -52,6 +52,7 @@ for project runs.
 ### Distributed Execution
 
 Includes `compute_config.yaml` for SLURM cluster execution:
+
 - Worker configuration
 - Resource allocation
 - Queue settings
@@ -59,6 +60,7 @@ Includes `compute_config.yaml` for SLURM cluster execution:
 ### Dynamic Charts
 
 JavaScript-based real-time visualizations:
+
 - Live metric updates
 - Interactive exploration
 - Web UI integration
@@ -66,6 +68,7 @@ JavaScript-based real-time visualizations:
 ### Complex Pipeline
 
 Multiple pipeline steps:
+
 - Data loading
 - Feature engineering
 - Model training
@@ -89,6 +92,7 @@ expops run my-project
 ## Configuration
 
 The template demonstrates:
+
 - **Remote cache backend**: GCS or other backends
 - **Cluster execution**: SLURM integration
 - **Dynamic reporting**: Real-time charts

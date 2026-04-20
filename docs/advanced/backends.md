@@ -18,6 +18,7 @@ experiment:
 ```
 
 **Features**:
+
 - No external dependencies
 - Persistent across restarts
 - Supports the web app via SSE streaming (requires local run server)
@@ -35,6 +36,7 @@ experiment:
 ```
 
 **Features**:
+
 - Persistent metrics accessible across machines
 - Enables real-time Firestore listeners in the web app
 - Requires a GCP project with Firestore enabled
@@ -78,6 +80,7 @@ experiment:
 ```
 
 **Features**:
+
 - Artifacts stored at `gs://<bucket>/<project_id>/artifacts/<version_hash>/...`
 - Cache manifests stored at `gs://<bucket>/<project_id>/cache/steps/`
 - Shared across machines running the same project
