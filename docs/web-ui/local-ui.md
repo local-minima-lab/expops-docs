@@ -1,95 +1,67 @@
-# Local Web UI
+# ExpOps Web App
 
-ExpOps includes a FastAPI web server for browsing projects, monitoring runs, and viewing charts. Two server variants are available: a read-only monitoring server and a full run server that can also trigger pipeline runs.
+The ExpOps Web App is a hosted Next.js application for browsing projects, monitoring runs, and viewing charts. It connects to your GitHub repositories and provides a dashboard for all your ExpOps projects.
 
-## Starting the Server
+**URL**: [https://expops-webapp-483258168513.asia-southeast1.run.app](https://expops-webapp-483258168513.asia-southeast1.run.app)
 
-### Monitoring server (read-only)
+## Getting Started
 
-Serves the web UI and exposes REST APIs for browsing projects, runs, and charts:
+1. Navigate to the [ExpOps Web App](https://expops-webapp-483258168513.asia-southeast1.run.app)
+2. Sign in with your GitHub account
+3. Select a repository, branch, and project to view
 
-```bash
-python -m expops.web.server
-```
+## Features
 
-Starts on `http://127.0.0.1:8000` by default.
+### Project Selection
 
-### Run server
+The web app uses a three-step selector to navigate to a project:
 
-Includes all monitoring APIs plus the ability to trigger runs and stream live SSE data for the local SQLite backend. Use this when running locally without a Firestore backend:
+1. **Repository** — Select from your GitHub repositories that have the ExpOps GitHub App installed
+2. **Branch** — Pick the branch to inspect
+3. **Project** — Choose an existing ExpOps project or create a new one
 
-```bash
-python -m expops.web.run_server
-```
+### Pipeline DAG Viewer
 
-Starts on `http://127.0.0.1:8765` by default.
+Each project page displays the pipeline's directed acyclic graph (DAG), showing the step dependency structure defined in `project_config.yaml`.
 
-Both servers respect `HOST` and `PORT` environment variables:
+### Run Monitoring
 
-```bash
-PORT=9000 python -m expops.web.run_server
-```
+Navigate to a run to see:
 
-## Accessing the UI
+- **Per-process status** — pending, running, completed, cached, or failed
+- **Timing information** — start time, end time, and duration for each process
+- **Live updates** — real-time status streaming via the [Listener SDK](listener-sdk.md), using either Firestore or a local SSE endpoint depending on the backend
 
-Open your browser and navigate to the server root. The static UI is served at:
+### Dynamic Charts
 
-```
-http://127.0.0.1:8765
-```
+Run pages render dynamic charts defined in the project. Charts update in real-time during active runs when using a Firestore backend.
 
-## REST API Reference
+### Project Builder
 
-All API routes are prefixed with `/api`.
+Create new projects or edit existing ones directly from the web app using the component-based project builder. The builder commits changes back to your GitHub repository via the ExpOps GitHub App.
 
-### Projects
+## GitHub App
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/projects` | List all project IDs in the workspace |
-| `GET` | `/api/projects/{project_id}/graph` | Pipeline DAG structure for a project |
-| `GET` | `/api/projects/{project_id}/runs` | List run IDs for a project |
-| `GET` | `/api/projects/{project_id}/chart-config` | Chart metadata and probe paths from `project_config.yaml` |
-| `GET` | `/api/projects/{project_id}/backend-config` | Effective KV backend type and config (run server only) |
-| `GET` | `/api/projects/{project_id}/version-hash` | Cache version hash for the project (run server only) |
+The ExpOps GitHub App must be installed on a repository before the web app can create or modify projects. The app provides:
 
-### Runs
+- Read access to repository contents (discovering projects and configs)
+- Write access for committing project changes from the project builder
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/projects/{project_id}/runs/{run_id}/status` | Step and process status snapshot |
-| `GET` | `/api/projects/{project_id}/runs/{run_id}/charts` | List charts registered for a run |
-| `GET` | `/api/projects/{project_id}/runs/{run_id}/charts/fetch` | Fetch a chart image (local path or GCS URI) |
-| `GET` | `/api/projects/{project_id}/runs/{run_id}/metrics/{probe_path}` | Metrics for a probe path |
+If the app is not installed, the web app will display an installation prompt with a link to install it.
 
-### Triggering Runs (run server only)
+## Backend Configuration
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/api/run/{project_id}` | Start a background pipeline run |
-| `GET` | `/api/run/{project_id}/active` | Check if a run subprocess is currently active |
+The web app reads the `experiment.cache.backend` section from `project_config.yaml` to determine how to stream live run data:
 
-### Workspace
+- **`type: gcp`** — connects directly to Firestore using the Firebase JS SDK for real-time updates
+- **`type: local`** — connects to a local run server via SSE (requires the run server to be running on your machine)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/api/workspace/info` | Workspace root path and git remote info |
+For Firestore-based projects, the web app also needs a Firebase API key, provided via:
 
-## Backend-Aware Listeners
+- `firebase_api_key` in the backend config
+- `firebase_api_key_file` — path to a file containing the key
+- `FIREBASE_API_KEY` or `NEXT_PUBLIC_FIREBASE_API_KEY` environment variable
 
-The web UI selects its real-time data mechanism based on the project's KV backend:
+See [Backends](../advanced/backends.md) for full backend configuration details.
 
-- **Local SQLite** (`backend.type: local`): the run server streams updates via Server-Sent Events (SSE) at `/api/live-data/{project_id}`.
-- **GCP Firestore** (`backend.type: gcp`): the frontend subscribes directly to Firestore using the Firebase JS SDK.
-
-The effective backend type is exposed via `GET /api/projects/{project_id}/backend-config`, which the UI reads on startup.
-
-## Requirements
-
-- A `configs/project_config.yaml` must exist in the project directory
-- Charts and metrics require at least one completed pipeline run
-- For Firestore-based live updates: a valid Firebase API key must be available via `firebase_api_key` in the backend config, a `firebase_api_key_file` path, or the `FIREBASE_API_KEY` environment variable
-
-## Building Custom Dashboards
-
-For custom real-time dashboards, use the [Listener SDK](listener-sdk.md) (`@expops/listener-sdk`). It provides React hooks that connect to either the local SSE endpoint or Firestore, matching whatever backend the project uses.
+---

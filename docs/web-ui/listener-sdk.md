@@ -56,10 +56,10 @@ Connects to the ExpOps run server via Server-Sent Events. Use this with the loca
 </LiveDataProvider>
 ```
 
-Start the run server first:
+Start the local run server first:
 
 ```bash
-python -m expops.web.run_server
+python -m expops.web.run_server  # deprecated — used only for local SSE streaming
 ```
 
 ### Firestore (GCP)

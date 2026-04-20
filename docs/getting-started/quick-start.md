@@ -47,18 +47,18 @@ The project configuration is located at:
 sklearn-basic/configs/project_config.yaml
 ```
 
-By default, the template uses a **local (SQLite) cache backend**, which is persistent. To enable cross-process live metrics (web UI) or remote backends, update `experiment.parameters.cache` in the project config.
+By default, the template uses a **local (SQLite) cache backend**, which is persistent. To enable cross-process live metrics (web app) or remote backends, update `experiment.parameters.cache` in the project config.
 
-### Important: Caching and Web UI Requirements
+### Important: Caching and Web App Requirements
 
-The default `cache.backend.type: local` supports persistent caching. For web UI metrics and charts across runs, or for remote/shared setups, set `cache.backend.type` to `gcp` (Firestore) and optionally configure `cache.object_store` for GCS. Example in `project_config.yaml`:
+The default `cache.backend.type: local` supports persistent caching. For web app metrics and charts across runs, or for remote/shared setups, set `cache.backend.type` to `gcp` (Firestore) and optionally configure `cache.object_store` for GCS. Example in `project_config.yaml`:
 
 ```yaml
 experiment:
   parameters:
     cache:
       backend:
-        type: local   # default; use gcp for Firestore (web UI / shared runs)
+        type: local   # default; use gcp for Firestore (web app / shared runs)
         # For GCP (Firestore):
         # type: gcp
         # gcp_project: <your-gcp-project-id>

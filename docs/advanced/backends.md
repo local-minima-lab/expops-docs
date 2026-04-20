@@ -20,7 +20,7 @@ experiment:
 **Features**:
 - No external dependencies
 - Persistent across restarts
-- Supports the local web UI via SSE streaming
+- Supports the web app via SSE streaming (requires local run server)
 - Limited to a single machine
 
 ### GCP (Firestore)
@@ -36,7 +36,7 @@ experiment:
 
 **Features**:
 - Persistent metrics accessible across machines
-- Enables real-time Firestore listeners in the web UI
+- Enables real-time Firestore listeners in the web app
 - Requires a GCP project with Firestore enabled
 
 **Setup**:
@@ -106,17 +106,17 @@ experiment:
 
 ---
 
-## Web UI Backend Requirements
+## Web App Backend Requirements
 
-The web UI reads the backend config from `project_config.yaml` to decide which listener to use:
+The ExpOps Web App reads the backend config from `project_config.yaml` to decide which listener to use:
 
-- **`type: local`** → the run server streams updates via SSE
-- **`type: gcp`** → the frontend connects directly to Firestore
+- **`type: local`** → connects to a local run server that streams updates via SSE
+- **`type: gcp`** → connects directly to Firestore for real-time updates
 
-For Firestore-based live updates, the web UI also needs a Firebase API key. Provide it via one of:
+For Firestore-based live updates, the web app also needs a Firebase API key. Provide it via one of:
 
 - `firebase_api_key` inline in the backend config
 - `firebase_api_key_file` — path to a file containing the key (relative to project root)
 - `FIREBASE_API_KEY` or `NEXT_PUBLIC_FIREBASE_API_KEY` environment variable
 
-See [Local Web UI](../web-ui/local-ui.md) for details on the web server and its API.
+See [ExpOps Web App](../web-ui/local-ui.md) for more details.

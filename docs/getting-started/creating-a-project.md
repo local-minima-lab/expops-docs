@@ -71,9 +71,9 @@ project’s hidden `.my-project/envs/` directory.
 
 ## Configuration Notes
 
-### Caching and Web UI
+### Caching and Web App
 
-By default, projects use a local SQLite KV store, which supports persistent caching. For remote or shared setups (e.g. web UI across machines):
+By default, projects use a local SQLite KV store, which supports persistent caching. For remote or shared setups (e.g. web app across machines):
 
 1. Configure a KV backend (Firestore) in `configs/project_config.yaml`
 2. For Firestore: Put credentials in any file (e.g. `firestore.json`) and set its path in the project config (e.g. `credentials_json` under the cache section)

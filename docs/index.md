@@ -32,7 +32,7 @@ This guide is organized into the following sections:
 - **[Project Structure](project-structure/overview.md)**: Understanding the project layout
 - **[Features](features/caching.md)**: Detailed feature documentation
 - **[Templates](project-templates/sklearn-basic.md)**: Available project templates
-- **[Web UI](web-ui/local-ui.md)**: Using the local web interface
+- **[Web App](web-ui/local-ui.md)**: Using the ExpOps Web App
 
 ## Installation
 
