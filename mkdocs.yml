@@ -1,7 +1,7 @@
 site_name: ExpOps Docs
 site_description: Documentation for the ExpOps MLOps platform
 site_author: ExpOps Team
-site_url: https://local-minima-lab.github.io/expops-docs/
+site_url: https://expops.minima.fit/
 repo_url: https://github.com/local-minima-lab/expops-docs
 repo_name: expops-docs
 
